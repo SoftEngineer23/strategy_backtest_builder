@@ -2,6 +2,8 @@
 
 An AI-powered trading strategy generator that converts plain English descriptions into executable Python code and backtests them against real market data.
 
+![Demo](demo.gif)
+
 ## Features
 
 - **Natural Language to Code**: Describe your trading strategy in plain English, get working Python code
