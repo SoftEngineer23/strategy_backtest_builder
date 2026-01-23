@@ -3,9 +3,11 @@ import { useState } from 'react';
 interface Props {
   onGenerate: (description: string) => void;
   isLoading: boolean;
+  useAgent: boolean;
+  onToggleAgent: (value: boolean) => void;
 }
 
-export function StrategyInput({ onGenerate, isLoading }: Props) {
+export function StrategyInput({ onGenerate, isLoading, useAgent, onToggleAgent }: Props) {
   const [description, setDescription] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -35,8 +37,26 @@ export function StrategyInput({ onGenerate, isLoading }: Props) {
           disabled={isLoading}
         />
 
+        <div className="generation-options">
+          <label className="toggle-label">
+            <input
+              type="checkbox"
+              checked={useAgent}
+              onChange={(e) => onToggleAgent(e.target.checked)}
+              disabled={isLoading}
+            />
+            <span className="toggle-switch"></span>
+            <span className="toggle-text">
+              Agentic Mode
+              <span className="toggle-hint">
+                {useAgent ? '(multi-step with self-critique)' : '(single-shot)'}
+              </span>
+            </span>
+          </label>
+        </div>
+
         <button type="submit" disabled={isLoading || !description.trim()}>
-          {isLoading ? 'Generating...' : 'Generate Strategy'}
+          {isLoading ? (useAgent ? 'Generating (this may take a minute)...' : 'Generating...') : 'Generate Strategy'}
         </button>
       </form>
 

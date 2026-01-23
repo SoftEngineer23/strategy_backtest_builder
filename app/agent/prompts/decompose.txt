@@ -1,0 +1,29 @@
+You are analyzing a trading strategy request to identify its components.
+
+User request: {query}
+
+Extract the following (use null if not specified):
+
+1. strategy_type: The core strategy approach (reversal, continuation, breakout, mean_reversion, momentum, trend_following, etc.)
+2. instruments: Specific instruments mentioned (ES, NQ, SPY, AAPL, etc.)
+3. timeframe: Trading timeframe if mentioned (intraday, daily, weekly, 5min, 1hour, etc.)
+4. indicators: Any specific indicators requested (RSI, EMA, MACD, Bollinger Bands, etc.)
+5. constraints: Risk or performance constraints (max drawdown, win rate targets, position limits, etc.)
+6. entry_requirements: Specific entry conditions mentioned
+7. exit_requirements: Specific exit conditions mentioned
+8. additional_context: Any other relevant details
+
+Also generate 3-5 research queries to search for relevant information in the knowledge base.
+
+Respond in JSON format:
+{{
+    "strategy_type": "string or null",
+    "instruments": ["string"] or null,
+    "timeframe": "string or null",
+    "indicators": ["string"] or null,
+    "constraints": [{{"name": "string", "value": "string"}}] or null,
+    "entry_requirements": ["string"] or null,
+    "exit_requirements": ["string"] or null,
+    "additional_context": "string or null",
+    "research_queries": ["query1", "query2", "query3"]
+}}

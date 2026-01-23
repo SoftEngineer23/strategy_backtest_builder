@@ -15,6 +15,7 @@ class BaseConfig:
 
     # RAG settings
     CHROMA_PERSIST_DIR = 'data/chroma'
+    CORPUS_DIR = 'app/corpus'
     EMBEDDING_MODEL = 'all-MiniLM-L6-v2'
     RAG_TOP_K = 5
 

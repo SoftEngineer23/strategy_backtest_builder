@@ -6,11 +6,18 @@ interface Props {
 	isLoading: boolean;
 }
 
+// Get yesterday's date (yfinance may not have today's data yet)
+function getYesterday(): string {
+	const date = new Date();
+	date.setDate(date.getDate() - 1);
+	return date.toISOString().split('T')[0];
+}
+
 export function BacktestConfig({ onRunBacktest, isLoading }: Props) {
 	const [config, setConfig] = useState<Config>({
 		ticker: 'SPY',
 		start: '2020-01-01',
-		end: new Date().toISOString().split('T')[0],
+		end: getYesterday(),
 	});
 
 	const handleSubmit = (e: React.FormEvent) => {
@@ -26,8 +33,10 @@ export function BacktestConfig({ onRunBacktest, isLoading }: Props) {
 
 	const setPreset = (years: number) => {
 		const end = new Date();
-		const start = new Date();
+		end.setDate(end.getDate() - 1); // Yesterday
+		const start = new Date(end);
 		start.setFullYear(end.getFullYear() - years);
+		start.setDate(start.getDate() + 1); // +1 day to start
 
 		setConfig({
 			...config,

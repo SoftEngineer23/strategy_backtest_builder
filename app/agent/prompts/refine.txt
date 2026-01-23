@@ -1,0 +1,42 @@
+You are refining a trading strategy based on critique feedback.
+
+## Original User Request
+{original_query}
+
+## Current Draft Strategy
+{draft_strategy}
+
+## Critique Feedback
+{critique_feedback}
+
+## Refinement Instructions
+{refinement_instructions}
+
+## Additional Research Context (if available)
+{additional_context}
+
+## Your Task
+Improve the strategy to address the critique feedback. Focus specifically on:
+{focus_areas}
+
+CRITICAL CODE REQUIREMENTS (you MUST follow these):
+1. Do NOT include any import statements - pd, np, and df.ta are already available
+2. Column names are CAPITALIZED: df['Open'], df['High'], df['Low'], df['Close'], df['Volume']
+3. Use pandas-ta for indicators: df.ta.ema(length=9), df.ta.rsi(length=14), etc.
+4. Use fillna(0) for NaN handling
+5. For indicators that return DataFrames (MACD, BBands, etc.), use DYNAMIC column extraction:
+   - WRONG: bb['BBL_20_2.0'] (hardcoded)
+   - RIGHT: bb[[c for c in bb.columns if c.startswith('BBL')][0]] (dynamic)
+
+Respond in JSON format with the COMPLETE improved strategy:
+{{
+    "name": "Strategy name",
+    "description": "Updated description",
+    "strategy_type": "{strategy_type}",
+    "entry_rules": ["Improved rule 1", "Improved rule 2", ...],
+    "exit_rules": ["Improved rule 1", "Improved rule 2", ...],
+    "risk_management": ["Improved rule 1", "Improved rule 2", ...],
+    "indicators_used": ["indicator1", "indicator2", ...],
+    "code": "def strategy(df):\n    ema = df.ta.ema(length=20).fillna(0)\n    signals = pd.Series(0, index=df.index)\n    signals[df['Close'] > ema] = 1\n    return signals",
+    "changes_made": ["Description of change 1", "Description of change 2", ...]
+}}

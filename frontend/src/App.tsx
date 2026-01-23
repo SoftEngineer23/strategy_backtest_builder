@@ -5,18 +5,20 @@ import { BacktestConfig } from './components/BacktestConfig';
 import { MetricsDisplay } from './components/MetricsDisplay';
 import { EquityChart } from './components/EquityChart';
 import { generateStrategy, runBacktest } from './services/api';
-import type { BacktestMetrics, EquityPoint, BacktestConfig as Config } from './types';
+import type { BacktestMetrics, EquityPoint, BacktestConfig as Config, StrategyDetails } from './types';
 import './App.css';
 
 function App() {
   const [description, setDescription] = useState('');
   const [code, setCode] = useState<string | null>(null);
+  const [strategyDetails, setStrategyDetails] = useState<StrategyDetails | null>(null);
   const [metrics, setMetrics] = useState<BacktestMetrics | null>(null);
   const [equityCurve, setEquityCurve] = useState<EquityPoint[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [isBacktesting, setIsBacktesting] = useState(false);
+  const [useAgent, setUseAgent] = useState(true);
 
   const handleGenerate = async (desc: string) => {
     setDescription(desc);
@@ -24,13 +26,17 @@ function App() {
     setError(null);
     setMetrics(null);
     setEquityCurve(null);
+    setStrategyDetails(null);
 
-    const result = await generateStrategy(desc);
+    const result = await generateStrategy(desc, { useAgent });
 
     setIsGenerating(false);
 
     if (result.success && result.code) {
       setCode(result.code);
+      if (result.strategy) {
+        setStrategyDetails(result.strategy);
+      }
     } else {
       setError(result.error || 'Failed to generate strategy');
     }
@@ -72,8 +78,47 @@ function App() {
           <StrategyInput
             onGenerate={handleGenerate}
             isLoading={isGenerating}
+            useAgent={useAgent}
+            onToggleAgent={setUseAgent}
           />
         </section>
+
+        {strategyDetails && (
+          <section className="strategy-details">
+            <h2>{strategyDetails.name}</h2>
+            <p className="strategy-description">{strategyDetails.description}</p>
+            <span className="strategy-type-badge">{strategyDetails.strategy_type}</span>
+
+            <div className="rules-grid">
+              <div className="rules-section">
+                <h3>Entry Rules</h3>
+                <ul>
+                  {strategyDetails.entry_rules.map((rule, i) => (
+                    <li key={i}>{rule}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="rules-section">
+                <h3>Exit Rules</h3>
+                <ul>
+                  {strategyDetails.exit_rules.map((rule, i) => (
+                    <li key={i}>{rule}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="rules-section">
+                <h3>Risk Management</h3>
+                <ul>
+                  {strategyDetails.risk_management.map((rule, i) => (
+                    <li key={i}>{rule}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </section>
+        )}
 
         {code && (
           <section className="code-section">
@@ -105,7 +150,6 @@ function App() {
 
       <footer>
         <p>For educational purposes only. Not financial advice. Past performance does not guarantee future results.</p>
-        <p>Built with Claude API, React, pandas-ta, and RAG-enhanced code generation</p>
       </footer>
     </div>
   );

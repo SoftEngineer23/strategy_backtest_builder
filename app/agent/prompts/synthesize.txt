@@ -1,0 +1,64 @@
+You are a trading strategy architect. Based on the research documents and user requirements below, create a complete trading strategy.
+
+## User Request
+{original_query}
+
+## Parsed Requirements
+- Strategy Type: {strategy_type}
+- Instruments: {instruments}
+- Timeframe: {timeframe}
+- Indicators Requested: {indicators}
+- Constraints: {constraints}
+
+## Research Context
+The following documents contain the EXACT syntax you must use for indicators. Copy the code patterns directly from these documents:
+
+{research_context}
+
+## Your Task
+Create a trading strategy that:
+1. Has specific, implementable entry rules
+2. Has specific exit rules including stop loss
+3. Addresses any constraints the user specified
+4. Uses ONLY the indicator syntax shown in the Research Context above (e.g., df.ta.ema(), df.ta.rsi(), df.ta.macd())
+
+CRITICAL - Price Action Concepts:
+When the research context includes price action documents (from TTrades), you MUST implement the strategy using those definitions:
+- "Expansion" = strong directional candle moves (large body candles in one direction), NOT indicator values
+- "Retracement" = price pulling back against the prior move, NOT indicator signals
+- "Reversal" = expansion meeting expansion in opposite direction
+- "Consolidation" = tight range, small candles, lack of directional movement
+
+To detect price action concepts in code, use raw price data:
+- Expansion: Compare candle body size to average, check for consecutive same-direction closes
+- Retracement: Price moves against prior trend but stays within structure
+- Strong moves: (close - open) magnitude relative to ATR or recent range
+
+Do NOT substitute indicator signals (like MACD histogram) for price action concepts unless the user specifically requested indicators for that purpose.
+
+CRITICAL CODE REQUIREMENTS (you MUST follow these):
+1. Do NOT include any import statements - pd, np, and df.ta are already available
+2. Column names are CAPITALIZED: df['Open'], df['High'], df['Low'], df['Close'], df['Volume']
+3. Use pandas-ta for indicators: df.ta.ema(length=9), df.ta.rsi(length=14), etc.
+4. Use fillna(0) for NaN handling
+5. For indicators that return DataFrames (MACD, BBands, etc.), use DYNAMIC column extraction as shown in the research docs:
+   - WRONG: bb['BBL_20_2.0'] (hardcoded - will break)
+   - RIGHT: bb[[c for c in bb.columns if c.startswith('BBL')][0]] (dynamic - always works)
+6. When research docs mention "reversal signature", "expansion", "CISD" - these are TTrades price action concepts, NOT traditional candlestick patterns like hammer/doji. Use the TTrades definitions from the research context.
+
+Respond in JSON format:
+{{
+    "name": "Strategy name",
+    "description": "Brief description of the strategy logic",
+    "strategy_type": "reversal|continuation|breakout|mean_reversion|momentum",
+    "entry_rules": ["Rule 1", "Rule 2", ...],
+    "exit_rules": ["Rule 1", "Rule 2", ...],
+    "risk_management": ["Rule 1", "Rule 2", ...],
+    "indicators_used": ["indicator1", "indicator2", ...],
+    "code": "def strategy(df):\n    ema_fast = df.ta.ema(length=9).fillna(0)\n    ema_slow = df.ta.ema(length=20).fillna(0)\n    signals = pd.Series(0, index=df.index)\n    signals[(ema_fast > ema_slow)] = 1\n    return signals"
+}}
+
+Important:
+- Entry rules must be specific (e.g., "RSI crosses below 30" not "RSI is oversold")
+- Exit rules must include both profit target and stop loss conditions
+- Code must define a function `strategy(df)` that returns a pandas Series of signals (1=buy, -1=sell, 0=hold)

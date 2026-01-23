@@ -10,9 +10,19 @@ const api = axios.create({
   },
 });
 
-export async function generateStrategy(description: string): Promise<GenerateResponse> {
+export interface GenerateOptions {
+  useAgent?: boolean;
+}
+
+export async function generateStrategy(
+  description: string,
+  options: GenerateOptions = {}
+): Promise<GenerateResponse> {
   try {
-    const response = await api.post('/generate', { description });
+    const response = await api.post('/generate', {
+      description,
+      use_agent: options.useAgent ?? false,
+    });
     return response.data;
   } catch (error: unknown) {
     const err = error as { response?: { data?: { error?: string } }; message?: string };

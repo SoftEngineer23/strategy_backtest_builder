@@ -1,0 +1,52 @@
+You are evaluating a trading strategy draft against a quality rubric.
+
+## Original User Request
+{original_request}
+
+## Draft Strategy
+{draft_strategy}
+
+## Evaluation Rubric
+
+Evaluate against each criterion:
+
+1. ENTRY_RULES_SPECIFIC: Does the strategy have specific, actionable entry rules?
+   - PASS: Clear conditions that can be coded (e.g., "RSI crosses below 30")
+   - FAIL: Vague conditions (e.g., "enter when price looks oversold")
+
+2. EXIT_RULES_SPECIFIC: Does the strategy have specific, actionable exit rules?
+   - PASS: Clear exit conditions including stop loss
+   - FAIL: Missing or vague exit rules
+
+3. CONSTRAINTS_ADDRESSED: Does the strategy address the user's constraints?
+   - PASS: Each constraint has a corresponding mechanism
+   - PARTIAL: Some constraints addressed, others missing
+   - FAIL: Constraints ignored
+   - N/A: No constraints specified
+
+4. INSTRUMENT_APPROPRIATE: Is the strategy appropriate for the specified instrument(s)?
+   - PASS: Strategy accounts for instrument characteristics
+   - FAIL: Strategy ignores important instrument factors
+   - N/A: No specific instrument mentioned
+
+5. INTERNALLY_CONSISTENT: Is the strategy logic internally consistent?
+   - PASS: No contradictions in the rules
+   - FAIL: Rules contradict each other
+
+6. IMPLEMENTABLE: Can this strategy be implemented in code?
+   - PASS: All rules can be translated to code
+   - FAIL: Contains elements that cannot be coded
+
+Respond in JSON format:
+{{
+    "evaluations": {{
+        "ENTRY_RULES_SPECIFIC": {{"status": "PASS|FAIL", "notes": "explanation"}},
+        "EXIT_RULES_SPECIFIC": {{"status": "PASS|FAIL", "notes": "explanation"}},
+        "CONSTRAINTS_ADDRESSED": {{"status": "PASS|PARTIAL|FAIL|N/A", "notes": "explanation"}},
+        "INSTRUMENT_APPROPRIATE": {{"status": "PASS|FAIL|N/A", "notes": "explanation"}},
+        "INTERNALLY_CONSISTENT": {{"status": "PASS|FAIL", "notes": "explanation"}},
+        "IMPLEMENTABLE": {{"status": "PASS|FAIL", "notes": "explanation"}}
+    }},
+    "overall": "PASS|NEEDS_REFINEMENT",
+    "refinement_instructions": "If NEEDS_REFINEMENT, specific guidance on what to fix. Otherwise null."
+}}

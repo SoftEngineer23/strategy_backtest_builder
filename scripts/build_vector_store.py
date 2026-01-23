@@ -1,8 +1,10 @@
 """
 Build vector store from corpus documents.
 to be run after build_corpus.py to create searchable embeddings.
+Supports both indicator docs and price_action docs with extended metadata.
 """
 
+import re
 import chromadb
 from chromadb.utils import embedding_functions
 from pathlib import Path
@@ -11,6 +13,24 @@ CORPUS_DIR = Path(__file__).parent.parent / 'app' / 'corpus'
 CHROMA_DIR = Path(__file__).parent.parent / 'data' / 'chroma'
 COLLECTION_NAME = 'strategy_docs'
 EMBEDDING_MODEL = 'all-MiniLM-L6-v2'
+
+
+def extract_price_action_metadata(content: str) -> dict:
+    """Extract metadata from price_action document format."""
+    metadata = {}
+
+    # Extract concepts from **Concepts:** line
+    concepts_match = re.search(r'\*\*Concepts:\*\*\s*(.+)', content)
+    if concepts_match:
+        concepts_str = concepts_match.group(1).strip()
+        metadata['concepts'] = concepts_str
+
+    # Extract source type
+    source_match = re.search(r'\*\*Source:\*\*\s*(.+)', content)
+    if source_match:
+        metadata['source_type'] = source_match.group(1).strip()
+
+    return metadata
 
 
 def load_documents():
@@ -30,14 +50,22 @@ def load_documents():
             lines = content.split('\n')
             title = lines[0].replace('#', '').strip() if lines else file_path.stem
 
+            # Base metadata
+            metadata = {
+                'source': str(file_path),
+                'category': category,
+                'title': title
+            }
+
+            # Extract additional metadata for price_action docs
+            if category == 'price_action':
+                extra_meta = extract_price_action_metadata(content)
+                metadata.update(extra_meta)
+
             documents.append({
                 'id': f"{category}_{file_path.stem}",
                 'content': content,
-                'metadata': {
-                    'source': str(file_path),
-                    'category': category,
-                    'title': title
-                }
+                'metadata': metadata
             })
 
     return documents

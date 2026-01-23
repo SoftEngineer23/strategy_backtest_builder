@@ -1,11 +1,17 @@
 """API routes for strategy generation and backtesting."""
 
+from pathlib import Path
 from flask import Blueprint, jsonify, request, current_app
 from app.services.llm_service import LLMService
 from app.services.backtest_service import BacktestService
+from app.agent.orchestrator import create_agent
+from app.agent.tracer import AgentTracer
 from datetime import datetime
 
 api_bp = Blueprint('api', __name__)
+
+# In-memory trace store for debugging (in production, use Redis or DB)
+_trace_store = {}
 
 @api_bp.route('/health', methods=['GET'])
 def health_check():
@@ -36,7 +42,14 @@ def generate_strategy():
             'error': 'Description is required'
         }), 400
 
-    # create LLM service and generate
+    # Check if agentic mode is requested
+    use_agent = data.get('use_agent', False)
+    include_trace = data.get('include_trace', False)
+
+    if use_agent:
+        return _generate_with_agent(description, include_trace)
+
+    # Legacy: create LLM service and generate
     llm = LLMService(
         api_key=current_app.config['ANTHROPIC_API_KEY'],
         chroma_dir=current_app.config['CHROMA_PERSIST_DIR']
@@ -44,6 +57,96 @@ def generate_strategy():
     result = llm.generate_strategy(description)
 
     return jsonify(result)
+
+
+def _generate_with_agent(description: str, include_trace: bool = False):
+    """
+    Generate strategy using agentic workflow.
+
+    Args:
+        description: User's strategy description.
+        include_trace: Whether to include execution trace in response.
+
+    Returns:
+        JSON response with strategy and optional trace.
+    """
+    try:
+        # Create agent
+        agent = create_agent(
+            api_key=current_app.config['ANTHROPIC_API_KEY'],
+            chroma_dir=Path(current_app.config['CHROMA_PERSIST_DIR']),
+            corpus_dir=Path(current_app.config.get('CORPUS_DIR', 'app/corpus')),
+            max_iterations=2
+        )
+
+        # Run agent
+        result = agent.run(description)
+
+        # Store trace for later retrieval
+        _trace_store[result.trace.request_id] = result.trace
+
+        # Build response
+        response = {
+            'success': result.success,
+            'code': result.strategy.code if result.strategy else None,
+            'error': result.errors[-1] if result.errors else None,
+            'warnings': result.warnings,
+            'request_id': result.trace.request_id,
+        }
+
+        # Include strategy details
+        if result.strategy:
+            response['strategy'] = {
+                'name': result.strategy.name,
+                'description': result.strategy.description,
+                'strategy_type': result.strategy.strategy_type,
+                'entry_rules': result.strategy.entry_rules,
+                'exit_rules': result.strategy.exit_rules,
+                'risk_management': result.strategy.risk_management,
+            }
+
+        # Optionally include trace
+        if include_trace:
+            tracer = AgentTracer()
+            response['trace'] = result.trace.to_dict()
+            response['trace_formatted'] = tracer.format_human_readable(result.trace)
+
+        return jsonify(response)
+
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'code': None,
+            'error': f'Agent error: {str(e)}',
+            'warnings': [],
+        }), 500
+
+
+@api_bp.route('/trace/<request_id>', methods=['GET'])
+def get_trace(request_id: str):
+    """
+    Retrieve execution trace for a previous agent run.
+
+    Args:
+        request_id: The request ID returned from /generate with use_agent=true.
+
+    Returns:
+        Trace data and formatted trace string.
+    """
+    trace = _trace_store.get(request_id)
+
+    if not trace:
+        return jsonify({
+            'error': f'Trace not found: {request_id}',
+            'available_traces': list(_trace_store.keys())[-10:]  # Last 10
+        }), 404
+
+    tracer = AgentTracer()
+    return jsonify({
+        'trace': trace.to_dict(),
+        'trace_formatted': tracer.format_human_readable(trace)
+    })
+
 
 @api_bp.route('/backtest', methods=['POST'])
 def run_backtest():

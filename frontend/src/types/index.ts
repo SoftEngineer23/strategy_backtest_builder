@@ -1,7 +1,19 @@
+export interface StrategyDetails {
+  name: string;
+  description: string;
+  strategy_type: string;
+  entry_rules: string[];
+  exit_rules: string[];
+  risk_management: string[];
+}
+
 export interface GenerateResponse {
   success: boolean;
   code: string | null;
   error: string | null;
+  strategy?: StrategyDetails;
+  request_id?: string;
+  warnings?: string[];
 }
 
 export interface BacktestMetrics {
