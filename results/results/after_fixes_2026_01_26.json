@@ -1,0 +1,61 @@
+{
+  "timestamp": "2026-01-26T12:41:41.151086",
+  "retrieval": {
+    "avg_precision": 0.37333333333333335,
+    "avg_recall": 0.8666666666666667,
+    "avg_mrr": 0.5722222222222222,
+    "pass_rate": 0.9333333333333333,
+    "total_cases": 15,
+    "passed_cases": 14,
+    "failed_tests": [
+      {
+        "test_id": "ret_004",
+        "query": "MACD histogram divergence signal",
+        "expected": [
+          "indicators_macd"
+        ],
+        "retrieved": [
+          "indicators_mcgd",
+          "indicators_kvo",
+          "indicators_ht_trendline",
+          "indicators_stoch",
+          "indicators_nvi"
+        ]
+      }
+    ]
+  },
+  "e2e": {
+    "pass_rate": 0.7,
+    "total_cases": 10,
+    "passed_cases": 7,
+    "avg_rubric_score": 4.5,
+    "avg_execution_time_ms": 43132.71293640137,
+    "failed_tests": [
+      {
+        "test_id": "e2e_005",
+        "query": "Trend following strategy with EMA and RSI filter, only take trades when RSI is between 40 and 60",
+        "failure_reasons": [
+          "Strategy type mismatch: expected 'trend_following', got 'momentum'"
+        ],
+        "rubric_score": 5.0
+      },
+      {
+        "test_id": "e2e_006",
+        "query": "ATR-based trailing stop strategy",
+        "failure_reasons": [
+          "Strategy type mismatch: expected 'trend_following', got 'continuation'"
+        ],
+        "rubric_score": 5.0
+      },
+      {
+        "test_id": "e2e_007",
+        "query": "Reversal strategy based on market structure and protected swings",
+        "failure_reasons": [
+          "Agent did not produce a strategy",
+          "Refinement failed: No JSON object found in LLM response: ```json\n{\n    \"name\": \"Precise Market Structure Reversal Strategy\",\n    \"description\": \"A reversal strategy that identifies high-probability reversal zones at precisely defined market structure levels..."
+        ],
+        "rubric_score": 0.0
+      }
+    ]
+  }
+}

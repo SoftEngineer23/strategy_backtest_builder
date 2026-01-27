@@ -42,14 +42,16 @@ class RAGService:
       results = collection.query(
           query_texts=[query],
           n_results=top_k,
-          include=['documents', 'metadatas']
+          include=['documents', 'metadatas', 'distances']
       )
 
       documents = []
       for i in range(len(results['ids'][0])):
           documents.append({
+              'id': results['ids'][0][i],
               'content': results['documents'][0][i],
-              'metadata': results['metadatas'][0][i]
+              'metadata': results['metadatas'][0][i],
+              'distance': results['distances'][0][i] if results.get('distances') else None
           })
 
       return documents

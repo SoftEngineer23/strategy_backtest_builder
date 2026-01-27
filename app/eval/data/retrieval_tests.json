@@ -1,0 +1,111 @@
+{
+  "description": "Retrieval evaluation test cases for Strategy Builder",
+  "version": "1.0",
+  "test_cases": [
+    {
+      "test_id": "ret_001",
+      "query": "RSI overbought oversold levels",
+      "expected_doc_ids": ["indicators_rsi"],
+      "category": "indicator_lookup",
+      "notes": "Basic RSI indicator lookup"
+    },
+    {
+      "test_id": "ret_002",
+      "query": "exponential moving average crossover",
+      "expected_doc_ids": ["indicators_ema"],
+      "category": "indicator_lookup",
+      "notes": "Basic EMA indicator lookup"
+    },
+    {
+      "test_id": "ret_003",
+      "query": "Bollinger Bands squeeze breakout",
+      "expected_doc_ids": ["indicators_bbands"],
+      "category": "indicator_lookup",
+      "notes": "BBands indicator lookup"
+    },
+    {
+      "test_id": "ret_004",
+      "query": "MACD histogram divergence signal",
+      "expected_doc_ids": ["indicators_macd"],
+      "category": "indicator_lookup",
+      "notes": "MACD indicator lookup"
+    },
+    {
+      "test_id": "ret_005",
+      "query": "ATR for stop loss placement",
+      "expected_doc_ids": ["indicators_atr"],
+      "category": "indicator_lookup",
+      "notes": "ATR indicator lookup"
+    },
+    {
+      "test_id": "ret_006",
+      "query": "how to identify a reversal in market structure",
+      "expected_doc_ids": ["price_action_reversal_sequence", "price_action_market_structure_basic"],
+      "category": "price_action_lookup",
+      "notes": "Reversal pattern recognition"
+    },
+    {
+      "test_id": "ret_007",
+      "query": "protected swing invalidation stop loss",
+      "expected_doc_ids": ["price_action_protected_swings", "price_action_stop_loss_mastery"],
+      "category": "price_action_lookup",
+      "notes": "Stop loss concepts"
+    },
+    {
+      "test_id": "ret_008",
+      "query": "expansion phase trading entry",
+      "expected_doc_ids": ["price_action_phases_expansion"],
+      "category": "price_action_lookup",
+      "notes": "Market phases concept"
+    },
+    {
+      "test_id": "ret_009",
+      "query": "consolidation range breakout",
+      "expected_doc_ids": ["price_action_phases_consolidation"],
+      "category": "price_action_lookup",
+      "notes": "Consolidation phase"
+    },
+    {
+      "test_id": "ret_010",
+      "query": "position sizing based on account risk",
+      "expected_doc_ids": ["price_action_position_sizing"],
+      "category": "price_action_lookup",
+      "notes": "Risk management concept"
+    },
+    {
+      "test_id": "ret_011",
+      "query": "combining RSI with market structure for entries",
+      "expected_doc_ids": ["indicators_rsi", "price_action_market_structure_basic"],
+      "category": "multi_doc",
+      "notes": "Multi-document query combining indicator and price action"
+    },
+    {
+      "test_id": "ret_012",
+      "query": "EMA and reversal confirmation",
+      "expected_doc_ids": ["indicators_ema", "price_action_reversal_sequence"],
+      "category": "multi_doc",
+      "notes": "Multi-document query"
+    },
+    {
+      "test_id": "ret_013",
+      "query": "how to predict earnings announcements",
+      "expected_doc_ids": [],
+      "category": "out_of_scope",
+      "notes": "Fundamental analysis - not in corpus"
+    },
+    {
+      "test_id": "ret_014",
+      "query": "best cryptocurrency to buy",
+      "expected_doc_ids": [],
+      "category": "out_of_scope",
+      "notes": "Investment advice - not in corpus"
+    },
+    {
+      "test_id": "ret_015",
+      "query": "how to read a company balance sheet",
+      "expected_doc_ids": [],
+      "category": "out_of_scope",
+      "notes": "Fundamental analysis - not in corpus"
+    }
+  ]
+}

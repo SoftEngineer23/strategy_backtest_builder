@@ -4,7 +4,17 @@ User request: {query}
 
 Extract the following (use null if not specified):
 
-1. strategy_type: The core strategy approach (reversal, continuation, breakout, mean_reversion, momentum, trend_following, etc.)
+1. strategy_type: The core strategy approach.
+   IMPORTANT: If the user explicitly names a strategy type (e.g., "trend following strategy", "reversal strategy"), use that type regardless of which indicators are mentioned. Indicators can be used as filters in any strategy type.
+
+   Use these definitions:
+   - trend_following: Strategies based on moving average crossovers (EMA, SMA), trend lines, or following established price direction
+   - reversal: Strategies that trade against the current trend at extreme levels using oscillators (RSI overbought/oversold, Stochastic)
+   - mean_reversion: Strategies expecting price to return to statistical mean (Bollinger Bands touch/revert)
+   - momentum: Strategies based on rate of price change or momentum indicators (MACD histogram, momentum oscillator)
+   - breakout: Strategies trading price breaking through support/resistance, channels, or consolidation patterns
+   - continuation: Strategies trading pullbacks within an established trend (pullback to EMA, flag patterns)
+   - risk_management: Strategies focused primarily on position sizing, stop loss placement, or trade management (ATR stops, trailing stops)
 2. instruments: Specific instruments mentioned (ES, NQ, SPY, AAPL, etc.)
 3. timeframe: Trading timeframe if mentioned (intraday, daily, weekly, 5min, 1hour, etc.)
 4. indicators: Any specific indicators requested (RSI, EMA, MACD, Bollinger Bands, etc.)

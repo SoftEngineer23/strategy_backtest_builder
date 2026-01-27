@@ -7,6 +7,7 @@ the complete agentic workflow.
 
 import uuid
 import time
+import traceback
 from pathlib import Path
 from typing import Dict, Optional
 
@@ -183,27 +184,41 @@ class StrategyAgent:
                 next_state = AgentState.FAILED
 
             # Record tool and LLM calls from handler
-            self.tracer.record_tool_calls(handler.get_tool_calls())
-            self.tracer.record_llm_calls(handler.get_llm_calls())
+            tool_calls = handler.get_tool_calls()
+            llm_calls = handler.get_llm_calls()
+            self.tracer.record_tool_calls(tool_calls)
+            self.tracer.record_llm_calls(llm_calls)
+
+            # Calculate token usage for this state
+            state_tokens = sum(call.tokens_input + call.tokens_output for call in llm_calls)
 
             # Determine artifacts produced
             artifacts = self._get_artifacts_produced(current_state, context)
+
+            # Build notes with token count
+            notes = self._get_state_notes(current_state, context)
+            if state_tokens > 0:
+                token_note = f"Tokens: {state_tokens}"
+                notes = f"{notes} | {token_note}" if notes else token_note
 
             # End state trace
             self.tracer.end_state(
                 next_state,
                 artifacts=artifacts,
-                notes=self._get_state_notes(current_state, context)
+                notes=notes
             )
 
             context.current_state = next_state
             return context
 
         except Exception as e:
+            # Capture full traceback for debugging
+            tb = traceback.format_exc()
             context.errors.append(f"State execution error: {str(e)}")
+            context.errors.append(f"Traceback:\n{tb}")
             self.tracer.end_state(
                 AgentState.FAILED,
-                notes=f"Exception: {str(e)}"
+                notes=f"Exception: {str(e)}\n{tb}"
             )
             context.current_state = AgentState.FAILED
             return context

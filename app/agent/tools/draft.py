@@ -7,6 +7,7 @@ trading strategy with entry/exit rules and code.
 
 import json
 import re
+import time
 from typing import Any, Dict, List, Optional
 
 import anthropic
@@ -107,13 +108,15 @@ class DraftTool(BaseTool):
             research_context=research_findings.get_context_text(max_chars=6000)
         )
 
-        # Call LLM
+        # Call LLM with timing
+        start = time.time()
         response = self.client.messages.create(
             model=self.model,
-            max_tokens=3000,
+            max_tokens=4500,
             temperature=0,
             messages=[{"role": "user", "content": prompt}]
         )
+        duration_ms = (time.time() - start) * 1000
 
         raw_text = response.content[0].text
 
@@ -123,7 +126,7 @@ class DraftTool(BaseTool):
             response_summary=f"Generated strategy with {len(raw_text)} chars",
             tokens_input=response.usage.input_tokens,
             tokens_output=response.usage.output_tokens,
-            duration_ms=0,  # Will be set by tool execution wrapper
+            duration_ms=duration_ms,
             model=self.model
         )
 
@@ -148,15 +151,19 @@ class DraftTool(BaseTool):
         Raises:
             ValueError: If JSON parsing fails.
         """
-        # Extract JSON from response (may be wrapped in markdown)
-        json_match = re.search(r'\{[\s\S]*\}', raw_text)
+        # Strip markdown code blocks if present
+        cleaned_text = re.sub(r'```json\s*\n?', '', raw_text)
+        cleaned_text = re.sub(r'```\s*\n?', '', cleaned_text)
+
+        # Extract JSON from response
+        json_match = re.search(r'\{[\s\S]*\}', cleaned_text)
         if not json_match:
-            raise ValueError("No JSON object found in LLM response")
+            raise ValueError(f"No JSON object found in LLM response: {raw_text[:200]}...")
 
         try:
             data = json.loads(json_match.group())
         except json.JSONDecodeError as e:
-            raise ValueError(f"Failed to parse JSON: {e}")
+            raise ValueError(f"Failed to parse JSON: {e}\nResponse: {raw_text[:200]}...")
 
         # Build strategy components
         components = []

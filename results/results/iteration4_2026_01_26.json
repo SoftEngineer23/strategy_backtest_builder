@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-01-26T14:00:29.637988",
+  "retrieval": {
+    "avg_precision": 0.38666666666666666,
+    "avg_recall": 0.9333333333333333,
+    "avg_mrr": 0.6388888888888888,
+    "pass_rate": 1.0,
+    "total_cases": 15,
+    "passed_cases": 15,
+    "failed_tests": []
+  },
+  "e2e": {
+    "pass_rate": 0.7,
+    "total_cases": 10,
+    "passed_cases": 7,
+    "avg_rubric_score": 5.0,
+    "avg_execution_time_ms": 50950.85554122925,
+    "failed_tests": [
+      {
+        "test_id": "e2e_002",
+        "query": "EMA crossover strategy using 9 and 21 period EMAs",
+        "failure_reasons": [
+          "Strategy type mismatch: expected 'trend_following', got 'momentum'"
+        ],
+        "rubric_score": 5.0
+      },
+      {
+        "test_id": "e2e_005",
+        "query": "Trend following strategy with EMA and RSI filter, only take trades when RSI is between 40 and 60",
+        "failure_reasons": [
+          "Strategy type mismatch: expected 'trend_following', got 'continuation'"
+        ],
+        "rubric_score": 5.0
+      },
+      {
+        "test_id": "e2e_006",
+        "query": "ATR-based trailing stop strategy",
+        "failure_reasons": [
+          "Strategy type mismatch: expected 'risk_management', got 'momentum'"
+        ],
+        "rubric_score": 5.0
+      }
+    ]
+  }
+}

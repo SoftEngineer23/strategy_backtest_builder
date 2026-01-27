@@ -41,7 +41,12 @@ class AgentState(Enum):
 
 
 class CritiqueStatus(Enum):
-    """Evaluation status for individual critique criteria."""
+    """
+    Evaluation status for individual critique criteria.
+
+    Uses explicit string values (not auto()) for clean JSON serialization
+    in API responses and execution traces.
+    """
     PASS = "PASS"
     PARTIAL = "PARTIAL"
     FAIL = "FAIL"
@@ -359,6 +364,8 @@ class AgentContext:
         if self.current_state == AgentState.COMPLETE and self.final_strategy is not None:
             return False
         # Safety limit on iterations (prevents infinite loops in REFINE)
+        # The +1 allows COMPLETE handler to run after max refinements.
+        # Real limit is enforced in CritiqueHandler which gates REFINE transitions.
         if self.iteration_count >= self.max_iterations + 1:
             return False
         return True

@@ -129,8 +129,12 @@ class DecomposeHandler(StateHandler):
         Raises:
             ValueError: If JSON parsing fails.
         """
+        # Strip markdown code blocks if present
+        cleaned_text = re.sub(r'```json\s*\n?', '', raw_text)
+        cleaned_text = re.sub(r'```\s*\n?', '', cleaned_text)
+
         # Extract JSON from response
-        json_match = re.search(r'\{[\s\S]*\}', raw_text)
+        json_match = re.search(r'\{[\s\S]*\}', cleaned_text)
         if not json_match:
             raise ValueError("No JSON object found in LLM response")
 

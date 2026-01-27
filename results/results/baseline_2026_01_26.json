@@ -1,0 +1,70 @@
+{
+  "timestamp": "2026-01-26T12:18:32.600057",
+  "retrieval": {
+    "avg_precision": 0.38666666666666666,
+    "avg_recall": 0.9333333333333333,
+    "avg_mrr": 0.6388888888888888,
+    "pass_rate": 1.0,
+    "total_cases": 15,
+    "passed_cases": 15,
+    "failed_tests": []
+  },
+  "e2e": {
+    "pass_rate": 0.4,
+    "total_cases": 10,
+    "passed_cases": 4,
+    "avg_rubric_score": 4.5,
+    "avg_execution_time_ms": 49555.53731918335,
+    "failed_tests": [
+      {
+        "test_id": "e2e_002",
+        "query": "EMA crossover strategy using 9 and 21 period EMAs",
+        "failure_reasons": [
+          "Strategy type mismatch: expected 'trend_following', got 'momentum'"
+        ],
+        "rubric_score": 5.0
+      },
+      {
+        "test_id": "e2e_005",
+        "query": "Trend following strategy with EMA and RSI filter, only take trades when RSI is between 40 and 60",
+        "failure_reasons": [
+          "Strategy type mismatch: expected 'trend_following', got 'momentum'"
+        ],
+        "rubric_score": 5.0
+      },
+      {
+        "test_id": "e2e_006",
+        "query": "ATR-based trailing stop strategy",
+        "failure_reasons": [
+          "Strategy type mismatch: expected 'trend_following', got 'continuation'"
+        ],
+        "rubric_score": 5.0
+      },
+      {
+        "test_id": "e2e_007",
+        "query": "Reversal strategy based on market structure and protected swings",
+        "failure_reasons": [
+          "Agent did not produce a strategy",
+          "Refinement failed: No JSON object found in LLM response: ```json\n{\n    \"name\": \"Precise Market Structure Reversal Strategy\",\n    \"description\": \"A reversal strategy that identifies high-probability reversal zones at precisely defined market structure levels..."
+        ],
+        "rubric_score": 0.0
+      },
+      {
+        "test_id": "e2e_009",
+        "query": "Simple SMA crossover with 50 and 200 day moving averages",
+        "failure_reasons": [
+          "Strategy type mismatch: expected 'trend_following', got 'continuation'"
+        ],
+        "rubric_score": 5.0
+      },
+      {
+        "test_id": "e2e_010",
+        "query": "Stochastic oscillator strategy buying oversold and selling overbought",
+        "failure_reasons": [
+          "Strategy type mismatch: expected 'reversal', got 'mean_reversion'"
+        ],
+        "rubric_score": 5.0
+      }
+    ]
+  }
+}

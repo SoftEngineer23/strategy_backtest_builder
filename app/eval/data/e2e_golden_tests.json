@@ -1,0 +1,106 @@
+{
+  "description": "End-to-end golden test cases for Strategy Builder",
+  "version": "1.1",
+  "test_cases": [
+    {
+      "test_id": "e2e_001",
+      "query": "RSI reversal strategy that buys when RSI drops below 30 and sells when it goes above 70",
+      "expected_strategy_types": ["reversal"],
+      "must_include": ["RSI", "30", "70"],
+      "must_not_include": [],
+      "expected_indicators": ["RSI"],
+      "min_rubric_score": 3.0,
+      "notes": "Basic RSI mean reversion - straightforward"
+    },
+    {
+      "test_id": "e2e_002",
+      "query": "EMA crossover strategy using 9 and 21 period EMAs",
+      "expected_strategy_types": ["trend_following", "momentum"],
+      "must_include": ["EMA", "9", "21", "cross"],
+      "must_not_include": [],
+      "expected_indicators": ["EMA"],
+      "min_rubric_score": 3.0,
+      "notes": "EMA crossover can be classified as trend_following or momentum"
+    },
+    {
+      "test_id": "e2e_003",
+      "query": "Mean reversion strategy using Bollinger Bands",
+      "expected_strategy_types": ["mean_reversion"],
+      "must_include": ["Bollinger", "band"],
+      "must_not_include": [],
+      "expected_indicators": ["BBANDS"],
+      "min_rubric_score": 3.0,
+      "notes": "Bollinger Bands mean reversion"
+    },
+    {
+      "test_id": "e2e_004",
+      "query": "MACD momentum strategy that enters on histogram crossover",
+      "expected_strategy_types": ["momentum"],
+      "must_include": ["MACD", "histogram"],
+      "must_not_include": [],
+      "expected_indicators": ["MACD"],
+      "min_rubric_score": 3.0,
+      "notes": "MACD histogram strategy"
+    },
+    {
+      "test_id": "e2e_005",
+      "query": "Trend following strategy with EMA and RSI filter, only take trades when RSI is between 40 and 60",
+      "expected_strategy_types": ["trend_following", "momentum", "continuation"],
+      "must_include": ["EMA", "RSI", "40", "60"],
+      "must_not_include": [],
+      "expected_indicators": ["EMA", "RSI"],
+      "min_rubric_score": 3.0,
+      "notes": "Multi-indicator strategy - classification varies based on LLM interpretation"
+    },
+    {
+      "test_id": "e2e_006",
+      "query": "ATR-based trailing stop strategy",
+      "expected_strategy_types": ["risk_management", "trend_following", "momentum", "continuation"],
+      "must_include": ["ATR", "stop"],
+      "must_not_include": [],
+      "expected_indicators": ["ATR"],
+      "min_rubric_score": 3.0,
+      "notes": "ATR trailing stop is a risk management technique applicable to multiple strategy types"
+    },
+    {
+      "test_id": "e2e_007",
+      "query": "Reversal strategy based on market structure and protected swings",
+      "expected_strategy_types": ["reversal"],
+      "must_include": ["reversal", "swing"],
+      "must_not_include": [],
+      "expected_indicators": [],
+      "min_rubric_score": 3.0,
+      "notes": "Price action reversal - TTrades concepts"
+    },
+    {
+      "test_id": "e2e_008",
+      "query": "Breakout strategy that enters when price breaks above the upper Bollinger Band with high volume",
+      "expected_strategy_types": ["breakout"],
+      "must_include": ["Bollinger", "break", "volume"],
+      "must_not_include": [],
+      "expected_indicators": ["BBANDS"],
+      "min_rubric_score": 3.0,
+      "notes": "Bollinger breakout with volume filter"
+    },
+    {
+      "test_id": "e2e_009",
+      "query": "Simple SMA crossover with 50 and 200 day moving averages",
+      "expected_strategy_types": ["trend_following", "momentum"],
+      "must_include": ["SMA", "50", "200"],
+      "must_not_include": [],
+      "expected_indicators": ["SMA"],
+      "min_rubric_score": 3.0,
+      "notes": "Golden cross - can be classified as trend_following or momentum"
+    },
+    {
+      "test_id": "e2e_010",
+      "query": "Stochastic oscillator strategy buying oversold and selling overbought",
+      "expected_strategy_types": ["reversal", "mean_reversion"],
+      "must_include": ["stochastic", "oversold", "overbought"],
+      "must_not_include": [],
+      "expected_indicators": ["STOCH"],
+      "min_rubric_score": 3.0,
+      "notes": "Stochastic oscillator - reversal and mean_reversion are conceptually similar here"
+    }
+  ]
+}

@@ -100,12 +100,22 @@ class RetrieveTool(BaseTool):
             concepts_str = metadata.get('concepts', '')
             concepts = [c.strip() for c in concepts_str.split(',')] if concepts_str else None
 
+            # Use actual doc_id from ChromaDB, fall back to generated ID
+            doc_id = doc.get('id', f"{doc_category}_{i}")
+
+            # Calculate relevance score from distance (lower distance = higher relevance)
+            distance = doc.get('distance')
+            if distance is not None:
+                relevance_score = max(0.0, 1.0 - distance)
+            else:
+                relevance_score = 1.0 - (i * 0.1)
+
             retrieved_doc = RetrievedDocument(
-                doc_id=f"{doc_category}_{i}",
+                doc_id=doc_id,
                 content=doc.get('content', ''),
                 title=metadata.get('title', 'Unknown'),
                 category=doc_category,
-                relevance_score=1.0 - (i * 0.1),  # Approximate score based on rank
+                relevance_score=relevance_score,
                 concepts=concepts
             )
             documents.append(retrieved_doc)
